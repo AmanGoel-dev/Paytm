@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { string } = require("zod");
 mongoose.connect(
-  "mongodb+srv://goelaman79060:2MPbpCcmyvcNeqaC@cluster0.u0ltuvh.mongodb.net/Tap_it"
+  "mongodb connecting string"
 );
 
 const userschema = mongoose.Schema({
