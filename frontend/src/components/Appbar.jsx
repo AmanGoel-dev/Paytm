@@ -1,6 +1,6 @@
 import React from "react";
 
-const Appbar = ({ value }) => {
+const Appbar = React.memo(({ value }) => {
   return (
     <div className=" flex  justify-between p-5  w-full shadow-lg">
       <div className=" font-bold  text-2xl ">TAP It</div>
@@ -13,6 +13,6 @@ const Appbar = ({ value }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Appbar;

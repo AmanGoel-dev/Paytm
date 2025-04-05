@@ -7,6 +7,7 @@ import Button from "../components/Button";
 import Warning from "../components/Warning";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Signin = () => {
   const [username, setusername] = useState("");
@@ -34,15 +35,29 @@ const Signin = () => {
           />
           <Button
             onclick={async () => {
-              const response = await axios.post(
-                "http://localhost:3000/api/v1/user/signin",
-                {
-                  username,
-                  password,
+              try {
+                const response = await axios.post(
+                  "http://localhost:3000/api/v1/user/signin",
+                  {
+                    username,
+                    password,
+                  }
+                );
+                toast.success("Login Sucessfull");
+                console.log(response.data);
+                localStorage.setItem("token", response.data.token);
+                localStorage.setItem("name", response.data.firstName);
+
+                navigate("/dashboard", {
+                  state: { name: response.data.firstName },
+                });
+              } catch (error) {
+                if (error?.response.status === 411) {
+                  toast.error(`${error.response.data.message}`);
+                } else {
+                  toast.error("Something went wrong");
                 }
-              );
-              localStorage.setItem("token", response.data.token);
-              navigate("/dashboard?name=" + username);
+              }
             }}
             trueval={"Sign In"}
           />

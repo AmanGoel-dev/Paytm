@@ -8,6 +8,7 @@ import Inputpassword from "../components/Inputpassword";
 import Button from "../components/Button";
 import Warning from "../components/Warning";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -24,6 +25,7 @@ const Signup = () => {
           <Inputbox
             Onchange={(e) => {
               setFirstname(e.target.value);
+              console.log(firstName);
             }}
             lable={"First Name"}
             placeholder={"John"}
@@ -51,17 +53,27 @@ const Signup = () => {
           />
           <Button
             onclick={async () => {
-              const response = await axios.post(
-                "http://localhost:3000/api/v1/user/signup",
-                {
-                  username,
-                  firstName,
-                  lastName,
-                  password,
+              try {
+                const response = await axios.post(
+                  "http://localhost:3000/api/v1/user/signup",
+                  {
+                    username,
+                    firstName,
+                    lastName,
+                    password,
+                  }
+                );
+                toast.success("Signup successful!");
+                localStorage.setItem("token", response.data.token);
+                localStorage.setItem("name", firstName);
+                navigate("/dashboard", { state: { name: firstName } });
+              } catch (error) {
+                if (error.response?.status === 404) {
+                  toast.error("Invalid inputs");
+                } else {
+                  toast.error("Something went wrong");
                 }
-              );
-              localStorage.setItem("token", response.data.token);
-              navigate("/dashboard?name=" + firstName);
+              }
             }}
             trueval={"Sign Up"}
           />

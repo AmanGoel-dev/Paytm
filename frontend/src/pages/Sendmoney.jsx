@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import Heading from "../components/Heading";
 import Inputbox from "../components/Inputbox";
 import Button from "../components/Button";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const Sendmoney = () => {
+  const navigate = useNavigate();
+  const firstname = localStorage.getItem("name");
   const [searchParam] = useSearchParams();
   const id = searchParam.get("id");
   const name = searchParam.get("name");
@@ -32,19 +35,31 @@ const Sendmoney = () => {
         </div>
 
         <Button
-          onclick={() => {
-            axios.post(
-              "http://localhost:3000/api/v1/account/transfer",
-              {
-                amount,
-                transfer: id,
-              },
-              {
-                headers: {
-                  Authorization: "Bearer " + localStorage.getItem("token"),
+          onclick={async () => {
+            try {
+              const res = await axios.post(
+                "http://localhost:3000/api/v1/account/transfer",
+                {
+                  amount,
+                  transfer: id,
                 },
+                {
+                  headers: {
+                    Authorization: "Bearer " + localStorage.getItem("token"),
+                  },
+                }
+              );
+              toast.success("Transfer Sucessfull");
+              navigate("/dashboard", {
+                state: {
+                  firstname: firstname,
+                },
+              });
+            } catch (error) {
+              if (error.response?.status === 400) {
+                toast.error(`${error.response.data.message}`);
               }
-            );
+            }
           }}
           trueval={"Initiate Transfer"}
           transfer={"true"}
